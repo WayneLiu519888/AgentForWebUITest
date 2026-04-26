@@ -1,0 +1,6 @@
+# AgentForWebUITest
+# 自主Web UI测试Agent — 告诉Agent测试哪个系统，Agent自主完成全流程
+
+# 核心依赖: agent-browser (Chrome 147) — 系统级安装
+# Python依赖:
+pyyaml>=6.0

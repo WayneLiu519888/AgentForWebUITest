@@ -1,0 +1,387 @@
+{
+  "generated_at": "2026-04-26T19:19:45.466690",
+  "total_cases": 10,
+  "planner_config": {
+    "cases_per_page": 10,
+    "priority_distribution": {
+      "P0": 0.2,
+      "P1": 0.3,
+      "P2": 0.3,
+      "P3": 0.2
+    }
+  },
+  "statistics": {
+    "total": 10,
+    "by_category": {
+      "form": 5,
+      "page": 1,
+      "api": 1,
+      "button": 2,
+      "link": 1
+    },
+    "by_priority": {
+      "P0": 2,
+      "P1": 3,
+      "P2": 3,
+      "P3": 2
+    },
+    "total_steps": 20,
+    "total_expectations": 10,
+    "avg_steps_per_case": 2.0
+  },
+  "cases": [
+    {
+      "id": "TC-F-1",
+      "name": "登录-正常提交",
+      "priority": "P0",
+      "category": "form",
+      "source_page": "https://httpbin.org",
+      "tags": [
+        "smoke",
+        "happy-path",
+        "login"
+      ],
+      "steps": [
+        {
+          "action": "type",
+          "target": "用户名",
+          "value": "admin",
+          "description": "在 用户名 输入 'admin'"
+        },
+        {
+          "action": "type",
+          "target": "密码",
+          "value": "admin",
+          "description": "在 密码 输入 'admin'"
+        },
+        {
+          "action": "click",
+          "target": "登录",
+          "value": "",
+          "description": "点击 登录"
+        }
+      ],
+      "expectations": [
+        {
+          "type": "url_contains",
+          "target": "",
+          "expected_value": "dashboard|home|index|welcome",
+          "operator": "matches"
+        }
+      ],
+      "description": "正向测试: 填写所有字段并提交",
+      "generated_at": "2026-04-26T19:19:45.466474"
+    },
+    {
+      "id": "TC-P-1",
+      "name": "页面加载-httpbin_org",
+      "priority": "P0",
+      "category": "page",
+      "source_page": "https://httpbin.org",
+      "tags": [
+        "smoke",
+        "page-load"
+      ],
+      "steps": [
+        {
+          "action": "navigate",
+          "target": "https://httpbin.org",
+          "value": "",
+          "description": "导航到 https://httpbin.org"
+        }
+      ],
+      "expectations": [
+        {
+          "type": "page_content",
+          "target": "",
+          "expected_value": "httpbin.org",
+          "operator": "contains"
+        }
+      ],
+      "description": "验证页面 https://httpbin.org 可正常加载",
+      "generated_at": "2026-04-26T19:19:45.466566"
+    },
+    {
+      "id": "TC-F-1-E1",
+      "name": "空值输入-用户名",
+      "priority": "P1",
+      "category": "form",
+      "source_page": "https://httpbin.org",
+      "tags": [
+        "negative",
+        "empty-value",
+        "validation"
+      ],
+      "steps": [
+        {
+          "action": "type",
+          "target": "用户名",
+          "value": "",
+          "description": "在 用户名 输入 ''"
+        },
+        {
+          "action": "type",
+          "target": "密码",
+          "value": "John Doe",
+          "description": "在 密码 输入 'John Doe'"
+        },
+        {
+          "action": "click",
+          "target": "登录",
+          "value": "",
+          "description": "点击 登录"
+        }
+      ],
+      "expectations": [
+        {
+          "type": "page_content",
+          "target": "",
+          "expected_value": "required|必填|请填写|不能为空",
+          "operator": "matches"
+        }
+      ],
+      "description": "负向测试: 用户名 留空提交",
+      "generated_at": "2026-04-26T19:19:45.466498"
+    },
+    {
+      "id": "TC-F-1-E2",
+      "name": "空值输入-密码",
+      "priority": "P1",
+      "category": "form",
+      "source_page": "https://httpbin.org",
+      "tags": [
+        "negative",
+        "empty-value",
+        "validation"
+      ],
+      "steps": [
+        {
+          "action": "type",
+          "target": "用户名",
+          "value": "test@example.com",
+          "description": "在 用户名 输入 'test@example.com'"
+        },
+        {
+          "action": "type",
+          "target": "密码",
+          "value": "",
+          "description": "在 密码 输入 ''"
+        },
+        {
+          "action": "click",
+          "target": "登录",
+          "value": "",
+          "description": "点击 登录"
+        }
+      ],
+      "expectations": [
+        {
+          "type": "page_content",
+          "target": "",
+          "expected_value": "required|必填|请填写|不能为空",
+          "operator": "matches"
+        }
+      ],
+      "description": "负向测试: 密码 留空提交",
+      "generated_at": "2026-04-26T19:19:45.466509"
+    },
+    {
+      "id": "TC-F-1-S3",
+      "name": "特殊字符-用户名",
+      "priority": "P1",
+      "category": "form",
+      "source_page": "https://httpbin.org",
+      "tags": [
+        "boundary",
+        "special-chars"
+      ],
+      "steps": [
+        {
+          "action": "type",
+          "target": "用户名",
+          "value": "<script>alert(1)</script>",
+          "description": "在 用户名 输入 '<script>alert(1)</script>'"
+        },
+        {
+          "action": "type",
+          "target": "密码",
+          "value": "test@example.com",
+          "description": "在 密码 输入 'test@example.com'"
+        },
+        {
+          "action": "click",
+          "target": "登录",
+          "value": "",
+          "description": "点击 登录"
+        }
+      ],
+      "expectations": [
+        {
+          "type": "page_content",
+          "target": "",
+          "expected_value": "",
+          "operator": "contains"
+        }
+      ],
+      "description": "边界测试: 用户名 输入特殊字符",
+      "generated_at": "2026-04-26T19:19:45.466523"
+    },
+    {
+      "id": "TC-F-1-S4",
+      "name": "超长输入-用户名",
+      "priority": "P2",
+      "category": "form",
+      "source_page": "https://httpbin.org",
+      "tags": [
+        "boundary",
+        "max-length"
+      ],
+      "steps": [
+        {
+          "action": "type",
+          "target": "用户名",
+          "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "description": "在 用户名 输入 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'"
+        },
+        {
+          "action": "type",
+          "target": "密码",
+          "value": "test@example.com",
+          "description": "在 密码 输入 'test@example.com'"
+        },
+        {
+          "action": "click",
+          "target": "登录",
+          "value": "",
+          "description": "点击 登录"
+        }
+      ],
+      "expectations": [
+        {
+          "type": "page_content",
+          "target": "",
+          "expected_value": "",
+          "operator": "contains"
+        }
+      ],
+      "description": "边界测试: 用户名 输入超长输入",
+      "generated_at": "2026-04-26T19:19:45.466532"
+    },
+    {
+      "id": "TC-A-1",
+      "name": "API状态码-GET get",
+      "priority": "P2",
+      "category": "api",
+      "source_page": "https://httpbin.org",
+      "tags": [
+        "api-check",
+        "status-code"
+      ],
+      "steps": [
+        {
+          "action": "verify",
+          "target": "/get",
+          "value": "",
+          "description": "等待API GET /get 完成"
+        }
+      ],
+      "expectations": [
+        {
+          "type": "api_status",
+          "target": "/get",
+          "expected_value": "200",
+          "operator": "equals"
+        }
+      ],
+      "description": "验证 GET /get 返回 200",
+      "generated_at": "2026-04-26T19:19:45.466561"
+    },
+    {
+      "id": "TC-B-1",
+      "name": "按钮可见-登录",
+      "priority": "P2",
+      "category": "button",
+      "source_page": "https://httpbin.org",
+      "tags": [
+        "ui-check",
+        "visibility"
+      ],
+      "steps": [
+        {
+          "action": "verify",
+          "target": "登录",
+          "value": "",
+          "description": "验证按钮 登录 可见"
+        }
+      ],
+      "expectations": [
+        {
+          "type": "element_visible",
+          "target": "登录",
+          "expected_value": "true",
+          "operator": "equals"
+        }
+      ],
+      "description": "验证按钮 登录 在页面上可见",
+      "generated_at": "2026-04-26T19:19:45.466540"
+    },
+    {
+      "id": "TC-B-1-CLK",
+      "name": "点击交互-登录",
+      "priority": "P3",
+      "category": "button",
+      "source_page": "https://httpbin.org",
+      "tags": [
+        "interaction",
+        "click-behavior"
+      ],
+      "steps": [
+        {
+          "action": "click",
+          "target": "登录",
+          "value": "",
+          "description": "点击按钮 登录"
+        }
+      ],
+      "expectations": [
+        {
+          "type": "page_content",
+          "target": "",
+          "expected_value": "",
+          "operator": "contains"
+        }
+      ],
+      "description": "验证点击按钮 登录 后的页面响应",
+      "generated_at": "2026-04-26T19:19:45.466543"
+    },
+    {
+      "id": "TC-L-1",
+      "name": "链接可达性-Forms",
+      "priority": "P3",
+      "category": "link",
+      "source_page": "https://httpbin.org",
+      "tags": [
+        "navigation",
+        "link-check"
+      ],
+      "steps": [
+        {
+          "action": "navigate",
+          "target": "https://httpbin.org/forms/post",
+          "value": "",
+          "description": "导航到 https://httpbin.org/forms/post"
+        }
+      ],
+      "expectations": [
+        {
+          "type": "url_contains",
+          "target": "https://httpbin.org/forms/post",
+          "expected_value": "post",
+          "operator": "contains"
+        }
+      ],
+      "description": "验证链接 Forms 可正常导航",
+      "generated_at": "2026-04-26T19:19:45.466551"
+    }
+  ]
+}

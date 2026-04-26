@@ -1,0 +1,50 @@
+# AgentForWebUITest 配置
+
+# 浏览器配置
+browser:
+  binary: "/root/.hermes/node/bin/agent-browser"
+  headless: true
+  session_name: "webui-test"
+  default_timeout: 30
+
+# 探索配置
+explorer:
+  max_depth: 3              # 最大递归深度
+  max_pages: 50             # 最大探索页面数
+  wait_after_load: 2000     # 页面加载后等待(ms)
+  same_origin_only: true    # 仅探索同域页面
+  
+# 用例生成配置 (迭代2)
+planner:
+  cases_per_page: 10         # 每页面最大用例数
+  priority_distribution:
+    P0: 0.2                  # 核心流程 20%
+    P1: 0.3                  # 重要功能 30%
+    P2: 0.3                  # 边界测试 30%
+    P3: 0.2                  # 探索性 20%
+  category_weights:
+    form: 0.35               # 表单测试 35%
+    button: 0.20             # 按钮测试 20%
+    link: 0.15               # 链接测试 15%
+    api: 0.20                # API测试 20%
+    page: 0.10               # 页面测试 10%
+
+# 执行配置
+executor:
+  retry_attempts: 3         # 失败重试次数
+  action_timeout: 10        # 单步超时(秒)
+  screenshot_on_step: true   # 每步截图
+  max_concurrent: 1         # 并行数
+
+# 报告配置
+reporter:
+  format: "markdown"        # markdown | html | json
+  output_dir: "./reports"
+  include_screenshots: true
+  feishu_notify: false      # 飞书通知
+
+# LLM配置
+llm:
+  provider: "deepseek"
+  model: "deepseek-v4-pro"
+  thinking: true

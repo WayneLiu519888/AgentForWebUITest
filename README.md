@@ -1,0 +1,146 @@
+# AgentForWebUITest 项目
+
+告诉Agent测试哪个系统，Agent自主完成全流程Web UI测试。
+
+## 当前状态: 迭代1+2 ✅
+
+**版本**: v0.2.0
+
+- ✅ 项目骨架 + 配置系统
+- ✅ 浏览器驱动 (agent-browser + Chrome 147)
+- ✅ 递归探索引擎 (BFS, 同源过滤, API拦截)
+- ✅ 页面知识图谱 (JSON序列化, 统计, 子链接追踪)
+- ✅ 策略引擎 (4种指令格式: 快速/深度/登录/完整)
+- ✅ **智能用例生成** (5类: 表单/按钮/链接/API/页面) 🆕
+- ⬜ 自主执行 (迭代3)
+- ⬜ 智能判定 (迭代4)
+
+## 快速开始
+
+```python
+from src.agent import WebUITestAgent
+
+agent = WebUITestAgent()
+
+# 一行指令，Agent自动完成: 探索 → 生成用例 → 报告
+result = agent.run("测试 https://httpbin.org")
+
+print(f"探索了 {result['pages_explored']} 个页面")
+print(f"生成了 {result['test_case_count']} 个测试用例")
+```
+
+### 输出示例
+
+```
+============================================================
+  AgentForWebUITest v0.2.0 — 自主Web UI测试Agent
+  Iteration 1+2: 策略 + 探索 + 用例生成
+============================================================
+
+[Phase 1/4] 解析策略: 测试 https://httpbin.org
+[Strategy] 解析完成: mode=full, depth=3, pages=50
+
+[Phase 2/4] 探索系统...
+[Explorer] 开始探索: https://httpbin.org
+[0] 探索: https://httpbin.org
+     ✅ 发现 41 元素, 5 链接, 3 API
+[Explorer] 完成! 探索 2 页面, 耗时 17.2s
+  知识图谱已保存: reports/knowledge_graph_*.json
+
+[Phase 3/4] 生成测试用例...
+[Planner] 页面数: 2, 表单数: 2, API数: 3
+  [httpbin_org] 生成 10 个用例
+  [httpbin_org_forms] 生成 10 个用例
+[Planner] 总计生成 20 个测试用例
+[Planner] 类别分布: {'form': 11, 'page': 2, 'api': 3, 'button': 4}
+[Planner] 优先级分布: {'P0': 3, 'P1': 6, 'P2': 6, 'P3': 5}
+
+[Phase 4/4] 生成报告...
+  报告已保存: reports/test_report_*.md
+
+============================================================
+  完成! 耗时 18.5s
+  探索 2 页面, 生成 20 用例
+============================================================
+```
+
+## 迭代2: 智能用例生成
+
+### 5类用例生成器
+
+| 类别 | 输入 | 生成策略 |
+|------|------|---------|
+| **form** | 发现的所有表单 | 正向提交 / 逐字段空值 / 特殊字符 / 超长输入 |
+| **button** | 按钮元素 | 可见性检查 / 禁用态检查 / 点击行为 |
+| **link** | 页面链接 | 导航可达性 / URL正确性 |
+| **api** | API端点 | 状态码验证 / 响应时间检测 |
+| **page** | 页面结构 | 加载验证 / 标题检查 / 元素完整性 |
+
+### 用例格式
+
+```json
+{
+  "id": "TC-F-1",
+  "name": "登录-正常提交",
+  "priority": "P0",
+  "category": "form",
+  "steps": [
+    {"action": "type", "target": "用户名", "value": "admin"},
+    {"action": "type", "target": "密码", "value": "admin"},
+    {"action": "click", "target": "登录"}
+  ],
+  "expectations": [
+    {"type": "url_contains", "expected_value": "dashboard|home"}
+  ]
+}
+```
+
+### 优先级分布
+
+| 优先级 | 比例 | 含义 |
+|--------|------|------|
+| P0 | 20% | 核心流程 (页面加载/登录表单) |
+| P1 | 30% | 重要功能 (API状态码/按钮交互) |
+| P2 | 30% | 边界测试 (空值/特殊字符/超长) |
+| P3 | 20% | 探索性 (可见性/标题/完整性) |
+
+## 项目结构
+
+```
+AgentForWebUITest/
+├── config.yaml           # 配置 (浏览器/探索/用例/LLM)
+├── requirements.txt      # pyyaml>=6.0
+├── README.md
+├── reports/              # 自动生成的报告和用例
+│   ├── test_cases_*.json
+│   ├── knowledge_graph_*.json
+│   └── test_report_*.md
+└── src/
+    ├── __init__.py
+    ├── agent.py           # 主入口 WebUITestAgent (301行)
+    ├── strategy.py         # 策略引擎 (114行)
+    ├── explorer.py         # BFS探索引擎 (283行)
+    ├── planner.py          # 智能用例生成器 🆕 (768行)
+    ├── browser/
+    │   ├── __init__.py     # 重新导出
+    │   └── driver.py       # AgentBrowser + API拦截 (336行)
+    └── knowledge/
+        ├── __init__.py
+        └── graph.py        # KnowledgeGraph + 数据类 (237行)
+```
+
+## 路线图
+
+| 迭代 | 内容 | 状态 |
+|------|------|------|
+| 迭代1 | 自主探索 + 知识图谱 | ✅ |
+| **迭代2** | **智能用例生成** | ✅ |
+| 迭代3 | ReAct执行引擎 + 自愈 | ⬜ |
+| 迭代4 | 智能判定 + 可视化报告 | ⬜ |
+
+## 技术栈
+
+- **浏览器**: agent-browser CLI v0.26.0 + Chrome 147
+- **语言**: Python 3
+- **依赖**: pyyaml (配置解析)
+- **测试目标**: 任何标准Web应用
