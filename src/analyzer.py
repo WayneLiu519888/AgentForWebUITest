@@ -1040,14 +1040,12 @@ class Analyzer:
         judgement_summary = ""
         if judgement:
             judgement_summary = (
-                f"Verdict: {judgement.verdict} (confidence: {judgement.confidence:.1%}). "
-                f"Visual: {judgement.visual_score:.1%}, "
-                f"Layout: {judgement.layout_score:.1%}, "
-                f"Content: {judgement.content_score:.1%}. "
+                f"Verdict: {judgement.overall_verdict} (confidence: {judgement.confidence:.1%}). "
+                f"Checks: {judgement.pass_checks}P/{judgement.fail_checks}F/{judgement.warn_checks}W/{judgement.skip_checks}S. "
             )
-            if judgement.issues:
+            if hasattr(judgement, 'issues') and judgement.issues:
                 judgement_summary += f"Issues: {'; '.join(judgement.issues[:3])}. "
-            if judgement.suggestions:
+            if hasattr(judgement, 'suggestions') and judgement.suggestions:
                 judgement_summary += f"Suggestions: {'; '.join(judgement.suggestions[:2])}."
 
         # Suggested fix (from analysis)
