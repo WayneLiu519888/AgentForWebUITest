@@ -6,8 +6,9 @@ AgentForWebUITest — 主入口
   2. 页面探索 (Explorer)             ✅ 迭代1
   3. 用例生成 (Planner)              ✅ 迭代2
   4. 自主执行 (Executor)             ✅ 迭代3
-  5. [迭代4] 智能判定 (Judge)
-  6. 报告生成 (Reporter)
+  5. 智能判定 (Judge)               ✅ 迭代4
+  6. 根因分析 (Analyzer)             ✅ 迭代4
+  7. 报告生成 (Reporter)             ✅ 迭代4增强
 
 用法:
     from src.agent import WebUITestAgent
@@ -29,6 +30,8 @@ try:
     from .knowledge import KnowledgeGraph
     from .planner import TestCasePlanner, PlannerConfig
     from .executor import TestExecutor, ExecutionConfig, TestExecutionResult
+    from .judge import Judge, JudgeConfig, JudgementResult
+    from .analyzer import Analyzer, FailureAnalysis, TrendReport, BugReport
     from .reporter import TestReporter
 except ImportError:
     from strategy import StrategyEngine, TestStrategy
@@ -37,6 +40,8 @@ except ImportError:
     from knowledge.graph import KnowledgeGraph
     from planner import TestCasePlanner, PlannerConfig
     from executor import TestExecutor, ExecutionConfig, TestExecutionResult
+    from judge import Judge, JudgeConfig, JudgementResult
+    from analyzer import Analyzer, FailureAnalysis, TrendReport, BugReport
     from reporter import TestReporter
 
 
