@@ -75,7 +75,7 @@ class TestReporter:
         report = f"""# {title}
 
 **生成时间**: {now}
-**Agent版本**: v0.3.0 (Iteration 1+2+3)
+**Agent版本**: v0.3.0 (Iteration 1+2+3+4)
 
 ---
 
@@ -325,7 +325,7 @@ class TestReporter:
         export_data = {
             "generated_at": datetime.now().isoformat(),
             "agent_version": "0.3.0",
-            "iterations": "1+2+3",
+            "iterations": "1+2+3+4",
             "summary": self._compute_stats(results),
             "healing_summary": self._compute_healing_stats(results),
             "results": [r.to_dict() for r in results],
@@ -459,7 +459,7 @@ details[open] summary {{ border-bottom: 1px solid #e0e0e0; }}
 <!-- Header -->
 <div class="header">
   <h1>🧪 AgentForWebUITest — 执行报告</h1>
-  <div class="meta">生成时间: {now} &nbsp;|&nbsp; 版本: v0.3.0 (Iteration 1+2+3)</div>
+  <div class="meta">生成时间: {now} &nbsp;|&nbsp; 版本: v0.3.0 (Iteration 1+2+3+4)</div>
 </div>
 
 <!-- 执行摘要 -->

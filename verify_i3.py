@@ -362,7 +362,7 @@ assert "results" in jdata
 assert "summary" in jdata
 assert "healing_summary" in jdata
 assert jdata["agent_version"] == "0.3.0"
-assert jdata["iterations"] == "1+2+3"
+assert jdata["iterations"] == "1+2+3+4"
 print(f"     JSON包含: {len(jdata['results'])} 结果, "
       f"summary={jdata['summary']['total']} total, "
       f"healing={jdata['healing_summary']['total_healings']}")
@@ -398,7 +398,7 @@ print("=" * 70)
 print("\n  4.1 Agent版本和迭代:")
 agent = WebUITestAgent()
 assert agent.VERSION == "0.3.0", f"版本应为0.3.0, 实际 {agent.VERSION}"
-assert agent.ITERATIONS == "1+2+3", f"迭代应为1+2+3, 实际 {agent.ITERATIONS}"
+assert agent.ITERATIONS == "1+2+3+4", f"迭代应为1+2+3+4, 实际 {agent.ITERATIONS}"
 print(f"     ✅ v{agent.VERSION} (Iteration {agent.ITERATIONS})")
 
 # 4.2 策略解析
