@@ -147,6 +147,8 @@ class TestExecutor:
         print(result.summary())
     """
 
+    __test__ = False  # 不是pytest测试类
+
     def __init__(self, browser=None, knowledge_graph=None, config: ExecutionConfig = None):
         self.browser = browser
         self.knowledge_graph = knowledge_graph

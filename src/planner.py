@@ -40,6 +40,8 @@ class TestStep:
     def to_dict(self) -> Dict:
         return asdict(self)
 
+TestStep.__test__ = False  # 不是pytest测试类
+
 
 @dataclass
 class TestExpectation:
@@ -51,6 +53,8 @@ class TestExpectation:
     
     def to_dict(self) -> Dict:
         return asdict(self)
+
+TestExpectation.__test__ = False  # 不是pytest测试类
 
 
 @dataclass
@@ -78,6 +82,8 @@ class TestCase:
     def summary(self) -> str:
         return (f"{self.id} [{self.priority}] {self.name} "
                 f"({len(self.steps)}步, {len(self.expectations)}预期)")
+
+TestCase.__test__ = False  # 不是pytest测试类
 
 
 @dataclass
@@ -160,6 +166,8 @@ class TestCasePlanner:
         for c in cases:
             print(c.summary())
     """
+    
+    __test__ = False  # 不是pytest测试类
     
     def __init__(self, config: PlannerConfig = None):
         self.config = config or PlannerConfig()

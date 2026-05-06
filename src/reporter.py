@@ -44,6 +44,8 @@ class TestReporter:
         json_path = reporter.export_json(results)
     """
 
+    __test__ = False  # 不是pytest测试类
+
     def __init__(self, output_dir: str = "reports"):
         self.output_dir = output_dir
         os.makedirs(output_dir, exist_ok=True)
