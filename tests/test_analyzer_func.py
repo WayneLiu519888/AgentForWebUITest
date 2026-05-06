@@ -1,6 +1,6 @@
 """Functional test for analyzer.py — tests real analysis logic"""
 import sys, json, os
-sys.path.insert(0, '/root/AgentForWebUITest')
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.analyzer import (
     Analyzer, FailureAnalysis, TrendReport, BugReport,
@@ -116,7 +116,7 @@ def test_analyze_failure():
         assert analysis.suggestions, f"No suggestions for {result.test_case_id}"
         assert len(analysis.suggestions) >= 1
 
-    return all_pass
+    pass
 
 def test_analyze_trends():
     """Test trend analysis with historical data."""
@@ -160,7 +160,6 @@ def test_analyze_trends():
     assert "TC-C" in trend.improvements, f"Expected TC-C in improvements, got {trend.improvements}"
     assert abs(trend.overall_pass_rate - (5/9)*100) < 0.1  # 5 passes out of 9 total, allow float rounding
     print("  ✅ Trend analysis passed!")
-    return True
 
 def test_bug_report_generation():
     """Test bug report generation."""
@@ -214,7 +213,6 @@ def test_bug_report_generation():
     print(f"  ✅ Bug report save/load passed! ({saved_path})")
 
     os.remove(saved_path)
-    return True
 
 def test_edge_cases():
     """Test edge cases and error handling."""
@@ -263,8 +261,6 @@ def test_edge_cases():
     assert summary["total"] == 1
     assert "ELEMENT_NOT_FOUND" in str(summary["by_category"])
     print("  ✅ Summary generation passed")
-
-    return True
 
 def test_serialization():
     """Test JSON roundtrip for all data classes."""
@@ -321,8 +317,6 @@ def test_serialization():
     os.remove("/tmp/test_fa.json")
     os.remove("/tmp/test_tr.json")
     print("  ✅ Save methods work")
-
-    return True
 
 
 if __name__ == "__main__":

@@ -72,6 +72,7 @@ class StepResult:
 @dataclass
 class TestExecutionResult:
     """单个测试用例的完整执行结果"""
+    __test__ = False
     test_case_id: str
     test_case_name: str
     priority: str

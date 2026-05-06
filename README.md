@@ -11,7 +11,7 @@
 - ✅ 递归探索引擎 (BFS, 同源过滤, API拦截)
 - ✅ 页面知识图谱 (JSON序列化, 统计, 子链接追踪)
 - ✅ 策略引擎 (4种指令格式: 快速/深度/登录/完整)
-- ✅ **智能用例生成** (5类: 表单/按钮/链接/API/页面) 🆕
+- ✅ **智能用例生成** (5类: 表单/按钮/链接/API/页面)
 - ✅ **自主执行** (ReAct循环 + 自愈选择器) (迭代3)
 - ✅ **智能判定 + 根因分析** (多模态 + Bug报告) (迭代4)
 
@@ -62,6 +62,25 @@ print(f"生成了 {result['test_case_count']} 个测试用例")
   完成! 耗时 18.5s
   探索 2 页面, 生成 20 用例
 ============================================================
+```
+
+## 测试
+
+```bash
+# 运行全部测试（9个）
+pytest tests/ -v
+
+# 预期输出:
+# tests/test_analyzer_func.py::test_analyze_failure PASSED
+# tests/test_analyzer_func.py::test_analyze_trends PASSED
+# tests/test_analyzer_func.py::test_bug_report_generation PASSED
+# tests/test_analyzer_func.py::test_edge_cases PASSED
+# tests/test_analyzer_func.py::test_serialization PASSED
+# tests/test_analyzer_verify.py::test_analyzer_verify PASSED
+# tests/test_verify_i2.py::test_verify_i2 PASSED
+# tests/test_verify_i3.py::test_verify_i3 PASSED
+# tests/test_verify_judge.py::test_verify_judge PASSED
+# ======================== 9 passed in 0.19s ========================
 ```
 
 ## 迭代2: 智能用例生成
@@ -115,17 +134,24 @@ AgentForWebUITest/
 │   ├── test_cases_*.json
 │   ├── knowledge_graph_*.json
 │   └── test_report_*.md
+├── tests/                # 测试套件 (9个测试)
+│   ├── conftest.py            # pytest路径配置
+│   ├── test_analyzer_func.py  # analyzer功能测试 (5个)
+│   ├── test_analyzer_verify.py # analyzer结构验证
+│   ├── test_verify_i2.py      # 迭代2验证
+│   ├── test_verify_i3.py      # 迭代3+4验证 (5段)
+│   └── test_verify_judge.py   # 判定引擎烟雾测试
 └── src/
     ├── __init__.py
     ├── agent.py           # 主入口 WebUITestAgent (410行)
     ├── strategy.py         # 策略引擎 (114行)
     ├── explorer.py         # BFS探索引擎 (283行)
-    ├── planner.py          # 智能用例生成器 🆕 (768行)
-    ├── executor.py         # ReAct执行引擎 🆕 (迭代3)
-    ├── healer.py           # 自愈选择器 🆕 (迭代3)
-    ├── reporter.py         # 测试报告生成 🆕 (迭代3)
-    ├── judge.py            # 多模态判定引擎 🆕 (迭代4)
-    ├── analyzer.py         # 根因分析器 🆕 (迭代4)
+    ├── planner.py          # 智能用例生成器 (768行)
+    ├── executor.py         # ReAct执行引擎 (696行)
+    ├── healer.py           # 自愈选择器
+    ├── reporter.py         # 测试报告生成 (834行)
+    ├── judge.py            # 多模态判定引擎
+    ├── analyzer.py         # 根因分析器
     ├── browser/
     │   ├── __init__.py     # 重新导出
     │   └── driver.py       # AgentBrowser + API拦截 (336行)
@@ -139,13 +165,22 @@ AgentForWebUITest/
 | 迭代 | 内容 | 状态 |
 |------|------|------|
 | 迭代1 | 自主探索 + 知识图谱 | ✅ |
-| **迭代2** | **智能用例生成** | ✅ |
+| 迭代2 | 智能用例生成 | ✅ |
 | 迭代3 | ReAct执行引擎 + 自愈 | ✅ |
 | 迭代4 | 智能判定 + 可视化报告 | ✅ |
+
+## 版本历史
+
+| 版本 | 日期 | 变更 |
+|------|------|------|
+| v0.3.0 | 2026-04-28 | 迭代1+2+3+4 全部完成。动态版本验证，tests/ 目录结构，9个测试全覆盖。 |
+| v0.2.0 | 2026-04-26 | 迭代1+2 完成。自主探索 + 智能用例生成。 |
+| v0.1.0 | 2026-04-26 | 项目初始化。骨架 + 浏览器驱动。 |
 
 ## 技术栈
 
 - **浏览器**: agent-browser CLI v0.26.0 + Chrome 147
 - **语言**: Python 3
 - **依赖**: pyyaml (配置解析)
+- **测试**: pytest 9.0+ (9 tests, 0 warnings)
 - **测试目标**: 任何标准Web应用
