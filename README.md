@@ -2,9 +2,9 @@
 
 告诉Agent测试哪个系统，Agent自主完成全流程Web UI测试。
 
-## 当前状态: 迭代1+2 ✅
+## 当前状态: 迭代1+2+3+4 ✅
 
-**版本**: v0.2.0
+**版本**: v0.3.0
 
 - ✅ 项目骨架 + 配置系统
 - ✅ 浏览器驱动 (agent-browser + Chrome 147)
@@ -12,8 +12,8 @@
 - ✅ 页面知识图谱 (JSON序列化, 统计, 子链接追踪)
 - ✅ 策略引擎 (4种指令格式: 快速/深度/登录/完整)
 - ✅ **智能用例生成** (5类: 表单/按钮/链接/API/页面) 🆕
-- ⬜ 自主执行 (迭代3)
-- ⬜ 智能判定 (迭代4)
+- ✅ **自主执行** (ReAct循环 + 自愈选择器) (迭代3)
+- ✅ **智能判定 + 根因分析** (多模态 + Bug报告) (迭代4)
 
 ## 快速开始
 
@@ -33,8 +33,8 @@ print(f"生成了 {result['test_case_count']} 个测试用例")
 
 ```
 ============================================================
-  AgentForWebUITest v0.2.0 — 自主Web UI测试Agent
-  Iteration 1+2: 策略 + 探索 + 用例生成
+  AgentForWebUITest v0.3.0 — 自主Web UI测试Agent
+  Iteration 1+2+3+4: 策略 + 探索 + 用例生成 + 执行 + 判定
 ============================================================
 
 [Phase 1/4] 解析策略: 测试 https://httpbin.org
@@ -117,10 +117,15 @@ AgentForWebUITest/
 │   └── test_report_*.md
 └── src/
     ├── __init__.py
-    ├── agent.py           # 主入口 WebUITestAgent (301行)
+    ├── agent.py           # 主入口 WebUITestAgent (410行)
     ├── strategy.py         # 策略引擎 (114行)
     ├── explorer.py         # BFS探索引擎 (283行)
     ├── planner.py          # 智能用例生成器 🆕 (768行)
+    ├── executor.py         # ReAct执行引擎 🆕 (迭代3)
+    ├── healer.py           # 自愈选择器 🆕 (迭代3)
+    ├── reporter.py         # 测试报告生成 🆕 (迭代3)
+    ├── judge.py            # 多模态判定引擎 🆕 (迭代4)
+    ├── analyzer.py         # 根因分析器 🆕 (迭代4)
     ├── browser/
     │   ├── __init__.py     # 重新导出
     │   └── driver.py       # AgentBrowser + API拦截 (336行)
@@ -135,8 +140,8 @@ AgentForWebUITest/
 |------|------|------|
 | 迭代1 | 自主探索 + 知识图谱 | ✅ |
 | **迭代2** | **智能用例生成** | ✅ |
-| 迭代3 | ReAct执行引擎 + 自愈 | ⬜ |
-| 迭代4 | 智能判定 + 可视化报告 | ⬜ |
+| 迭代3 | ReAct执行引擎 + 自愈 | ✅ |
+| 迭代4 | 智能判定 + 可视化报告 | ✅ |
 
 ## 技术栈
 

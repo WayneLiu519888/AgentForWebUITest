@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""最终验证: AgentForWebUITest v0.2.0"""
+"""最终验证: AgentForWebUITest v0.3.0"""
 import sys
 sys.path.insert(0, '.')
 
@@ -11,7 +11,7 @@ from src.agent import WebUITestAgent
 from collections import Counter
 
 print("=" * 60)
-print("  AgentForWebUITest v0.2.0 最终验证")
+print("  AgentForWebUITest v0.3.0 最终验证")
 print("=" * 60)
 
 # 1. 策略解析
@@ -28,8 +28,8 @@ print("   OK 4种指令格式解析正确")
 # 2. Agent版本
 print("\n2. Agent版本...")
 agent = WebUITestAgent()
-assert agent.VERSION == "0.2.0"
-assert agent.ITERATIONS == "1+2"
+assert agent.VERSION == "0.3.0"
+assert agent.ITERATIONS == "1+2+3+4"
 print(f"   OK v{agent.VERSION} (Iteration {agent.ITERATIONS})")
 
 # 3. 完整流水线
@@ -69,7 +69,7 @@ assert len(loaded) == len(cases)
 print("   OK JSON序列化/反序列化正常")
 
 print("\n" + "=" * 60)
-print("  PASS 迭代2 全部验证通过!")
+print("  PASS 迭代4 全部验证通过!")
 print(f"  总代码: 2045行 (10个Python文件)")
 print(f"  生成用例: {len(cases)} 个, {sum(len(c.steps) for c in cases)} 步骤")
 print("=" * 60)

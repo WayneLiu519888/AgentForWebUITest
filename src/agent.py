@@ -48,12 +48,12 @@ except ImportError:
 class WebUITestAgent:
     """自主Web UI测试Agent
     
-    当前: 迭代1+2+3 — 策略解析 + 递归探索 + 用例生成 + 自主执行
-    后续迭代将逐步添加: 智能判定
+    当前: 迭代1+2+3+4 — 策略解析 + 递归探索 + 用例生成 + 自主执行 + 智能判定 + 根因分析
+    后续迭代将逐步添加: 可视化报告增强
     """
     
     VERSION = "0.3.0"
-    ITERATIONS = "1+2+3"
+    ITERATIONS = "1+2+3+4"
     
     def __init__(self, config_path: str = None):
         """初始化Agent
