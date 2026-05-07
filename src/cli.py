@@ -43,10 +43,25 @@ def cmd_explore(url: str) -> bool:
 
 
 def cmd_suite(url: str, preset: str = "regression", filter_expr: str = None,
-              split: bool = False) -> bool:
-    """TestSuite 编排执行"""
+              split: bool = False, ci: bool = False) -> int:
+    """TestSuite 编排执行
+
+    Returns:
+        int: Exit code. In normal mode: 0=success, 1=failure.
+             In CI mode: min(failed, 255).
+    """
+    if ci:
+        from src.agent import WebUITestAgent
+        from src.suite.ci import CIRunner
+
+        agent = WebUITestAgent()
+        runner = CIRunner(artifact_dir="ci-artifacts", verbose=True)
+        return runner.run_and_report(
+            agent, url, preset=preset, filter_expr=filter_expr, split=split
+        )
+
     from src.agent import WebUITestAgent
-    
+
     agent = WebUITestAgent()
     result = agent.run_with_suite(
         f"测试 {url}",
@@ -54,13 +69,13 @@ def cmd_suite(url: str, preset: str = "regression", filter_expr: str = None,
         filter_expr=filter_expr,
         split_by_category=split
     )
-    
+
     summary = result.get("suite_summary", {})
     failed = summary.get("failed", 0) + summary.get("error", 0)
-    
+
     if summary:
         print(f"\n{'✅ 全部通过!' if failed == 0 else f'❌ {failed} 失败'}")
-    return failed == 0
+    return 0 if failed == 0 else 1
 
 
 def cmd_check() -> bool:
@@ -148,6 +163,7 @@ def main():
         print("  --preset <name>    套件预设: smoke/critical/regression/full")
         print("  --filter <expr>    过滤表达式: P0+form, ~P3, url:/login/")
         print("  --split            按类别拆分套件")
+        print("  --ci               CI模式: 生成junit.xml + 失败数退出码")
         sys.exit(0)
 
     cmd = sys.argv[1]
@@ -164,12 +180,28 @@ def main():
             print(f"❌ {cmd} 需要 URL 参数")
             sys.exit(1)
         
+        # 如果第一个参数是 --help 或 -h，显示帮助
+        if args[0] in ("-h", "--help", "help"):
+            print(f"AgentForWebUITest CLI v{VERSION}")
+            print(f"\n{cmd} 用法:")
+            if cmd == "suite":
+                print("  webui-test suite <url> [选项]")
+                print(f"\n选项:")
+                print("  --preset <name>    套件预设: smoke/critical/regression/full")
+                print("  --filter <expr>    过滤表达式: P0+form, ~P3, url:/login/")
+                print("  --split            按类别拆分套件")
+                print("  --ci               CI模式: 生成junit.xml + 失败数退出码")
+            else:
+                print(f"  webui-test {cmd} <url>")
+            sys.exit(0)
+        
         if cmd == "suite":
-            # 解析 --preset / --filter / --split
+            # 解析 --preset / --filter / --split / --ci
             preset = "regression"
             filter_expr = None
             split = False
-            
+            ci = False
+
             i = 1
             url = args[0]
             while i < len(args):
@@ -182,16 +214,22 @@ def main():
                 elif args[i] == "--split":
                     split = True
                     i += 1
+                elif args[i] == "--ci":
+                    ci = True
+                    i += 1
                 else:
                     i += 1
-            
-            success = func(url, preset=preset, filter_expr=filter_expr, split=split)
+
+            exit_code = func(url, preset=preset, filter_expr=filter_expr,
+                             split=split, ci=ci)
         else:
             success = func(args[0])
+            exit_code = 0 if success else 1
     else:
         success = func()
+        exit_code = 0 if success else 1
 
-    sys.exit(0 if success else 1)
+    sys.exit(exit_code)
 
 
 if __name__ == "__main__":
