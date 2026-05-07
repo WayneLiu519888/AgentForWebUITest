@@ -168,19 +168,23 @@ AgentForWebUITest/
 | 迭代2 | 智能用例生成 | ✅ |
 | 迭代3 | ReAct执行引擎 + 自愈 | ✅ |
 | 迭代4 | 智能判定 + 可视化报告 | ✅ |
+| **迭代5** | **TestSuite组装 + CI集成 + 多浏览器** | 📋 [方案](docs/iteration5_plan.md) |
+
+> 迭代5 详细方案: [docs/iteration5_plan.md](docs/iteration5_plan.md)
 
 ## 版本历史
 
 | 版本 | 日期 | 变更 |
 |------|------|------|
-| v0.3.0 | 2026-04-28 | 迭代1+2+3+4 全部完成。动态版本验证，tests/ 目录结构，9个测试全覆盖。 |
-| v0.2.0 | 2026-04-26 | 迭代1+2 完成。自主探索 + 智能用例生成。 |
-| v0.1.0 | 2026-04-26 | 项目初始化。骨架 + 浏览器驱动。 |
+| **v0.4.0** | 2026-05-07 | 工程化: pip安装、CLI (webui-test)、CI/CD、Makefile |
+| v0.3.0 | 2026-04-28 | 迭代1+2+3+4 全部完成。9个测试全覆盖。 |
+| v0.2.0 | 2026-04-26 | 迭代1+2 完成。 |
+| v0.1.0 | 2026-04-26 | 项目初始化。 |
 
 ## 技术栈
 
-- **浏览器**: agent-browser CLI v0.26.0 + Chrome 147
+- **浏览器**: agent-browser CLI v0.26.0 + Chrome 147 (计划: +Playwright Firefox/WebKit)
 - **语言**: Python 3
-- **依赖**: pyyaml (配置解析)
-- **测试**: pytest 9.0+ (9 tests, 0 warnings)
+- **依赖**: pyyaml (配置解析), playwright (可选, 多浏览器)
+- **测试**: pytest 9.0+ (9 tests)
 - **测试目标**: 任何标准Web应用
