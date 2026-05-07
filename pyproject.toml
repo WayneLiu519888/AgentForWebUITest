@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=64.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-for-webui-test"
+version = "0.4.0"
+authors = [
+    {name = "HermesAgentEvolution Team", email = "contact@example.com"}
+]
+description = "自主Web UI测试Agent — 告诉Agent测试哪个系统，Agent自主完成探索、用例生成、执行、判定"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Testing",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "pytest-cov"]
+
+[project.scripts]
+webui-test = "src.cli:main"
+
+[tool.setuptools]
+packages = ["src", "src.browser", "src.knowledge"]
+[tool.setuptools.package-dir]
+"src" = "src"
+"src.browser" = "src/browser"
+"src.knowledge" = "src/knowledge"
