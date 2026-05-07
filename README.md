@@ -1,190 +1,144 @@
-# AgentForWebUITest 项目
+# AgentForWebUITest
 
-告诉Agent测试哪个系统，Agent自主完成全流程Web UI测试。
+> **告诉 Agent 测试哪个系统，Agent 自主完成全流程 Web UI 测试**
 
-## 当前状态: 迭代1+2+3+4 ✅
+[![Python](https://img.shields.io/badge/python-3.9%2B-blue)]
+[![Tests](https://img.shields.io/badge/tests-9%20passed-brightgreen)]
+[![Version](https://img.shields.io/badge/version-0.5.0-blue)]
 
-**版本**: v0.3.0
+---
 
-- ✅ 项目骨架 + 配置系统
-- ✅ 浏览器驱动 (agent-browser + Chrome 147)
-- ✅ 递归探索引擎 (BFS, 同源过滤, API拦截)
-- ✅ 页面知识图谱 (JSON序列化, 统计, 子链接追踪)
-- ✅ 策略引擎 (4种指令格式: 快速/深度/登录/完整)
-- ✅ **智能用例生成** (5类: 表单/按钮/链接/API/页面)
-- ✅ **自主执行** (ReAct循环 + 自愈选择器) (迭代3)
-- ✅ **智能判定 + 根因分析** (多模态 + Bug报告) (迭代4)
+## ⚡ 5 秒安装
 
-## 快速开始
+```bash
+pip install agent-for-webui-test && webui-test check
+```
+
+---
+
+## 🎯 一句话描述
+
+**AI 自主 Web UI 测试 Agent** — 从页面探索、用例生成、执行判定到报告输出，全流程无人值守。
+
+---
+
+## 🧭 快速了解
+
+| | | | |
+|:---:|:---:|:---:|:---:|
+| 🔍 **自主探索** | 🧪 **智能用例** | ⚡ **ReAct执行** | 🏗️ **TestSuite** |
+| BFS递归爬取页面 | 5类用例自动生成 | 自愈选择器 | 过滤+依赖编排 |
+| API拦截+知识图谱 | P0-P3优先级 | 失败重试 | 8个预置模板 |
+
+---
+
+## 🏗️ 架构总览
+
+```
+用户指令 → Strategy → Explorer → Planner → SuiteRunner → 报告
+                          │          │           │
+                    KnowledgeGraph  [TestCase]  SuiteResult
+                          │          │           │
+                    ┌──────┴──────────┴───────────┴──────┐
+                    │        BrowserInterface             │
+                    │  AgentBrowser │ PlaywrightBrowser   │
+                    │  (Chrome 147)  │ (Chromium|FF|WK)   │
+                    └─────────────────────────────────────┘
+```
+
+---
+
+## 🚀 快速上手
+
+```bash
+# 1. 安装
+pip install agent-for-webui-test
+
+# 2. 自检
+webui-test check
+
+# 3. 冒烟测试
+webui-test suite https://httpbin.org --preset smoke
+
+# 4. CI 模式
+webui-test suite https://example.com --ci --filter "P0+P1"
+```
 
 ```python
+# Python API
 from src.agent import WebUITestAgent
 
 agent = WebUITestAgent()
-
-# 一行指令，Agent自动完成: 探索 → 生成用例 → 报告
-result = agent.run("测试 https://httpbin.org")
-
-print(f"探索了 {result['pages_explored']} 个页面")
-print(f"生成了 {result['test_case_count']} 个测试用例")
+result = agent.run_with_suite("测试 https://example.com", preset="smoke")
+print(f"通过率: {result['suite_summary']['pass_rate']}%")
 ```
 
-### 输出示例
+---
 
-```
-============================================================
-  AgentForWebUITest v0.3.0 — 自主Web UI测试Agent
-  Iteration 1+2+3+4: 策略 + 探索 + 用例生成 + 执行 + 判定
-============================================================
-
-[Phase 1/4] 解析策略: 测试 https://httpbin.org
-[Strategy] 解析完成: mode=full, depth=3, pages=50
-
-[Phase 2/4] 探索系统...
-[Explorer] 开始探索: https://httpbin.org
-[0] 探索: https://httpbin.org
-     ✅ 发现 41 元素, 5 链接, 3 API
-[Explorer] 完成! 探索 2 页面, 耗时 17.2s
-  知识图谱已保存: reports/knowledge_graph_*.json
-
-[Phase 3/4] 生成测试用例...
-[Planner] 页面数: 2, 表单数: 2, API数: 3
-  [httpbin_org] 生成 10 个用例
-  [httpbin_org_forms] 生成 10 个用例
-[Planner] 总计生成 20 个测试用例
-[Planner] 类别分布: {'form': 11, 'page': 2, 'api': 3, 'button': 4}
-[Planner] 优先级分布: {'P0': 3, 'P1': 6, 'P2': 6, 'P3': 5}
-
-[Phase 4/4] 生成报告...
-  报告已保存: reports/test_report_*.md
-
-============================================================
-  完成! 耗时 18.5s
-  探索 2 页面, 生成 20 用例
-============================================================
-```
-
-## 测试
-
-```bash
-# 运行全部测试（9个）
-pytest tests/ -v
-
-# 预期输出:
-# tests/test_analyzer_func.py::test_analyze_failure PASSED
-# tests/test_analyzer_func.py::test_analyze_trends PASSED
-# tests/test_analyzer_func.py::test_bug_report_generation PASSED
-# tests/test_analyzer_func.py::test_edge_cases PASSED
-# tests/test_analyzer_func.py::test_serialization PASSED
-# tests/test_analyzer_verify.py::test_analyzer_verify PASSED
-# tests/test_verify_i2.py::test_verify_i2 PASSED
-# tests/test_verify_i3.py::test_verify_i3 PASSED
-# tests/test_verify_judge.py::test_verify_judge PASSED
-# ======================== 9 passed in 0.19s ========================
-```
-
-## 迭代2: 智能用例生成
-
-### 5类用例生成器
-
-| 类别 | 输入 | 生成策略 |
-|------|------|---------|
-| **form** | 发现的所有表单 | 正向提交 / 逐字段空值 / 特殊字符 / 超长输入 |
-| **button** | 按钮元素 | 可见性检查 / 禁用态检查 / 点击行为 |
-| **link** | 页面链接 | 导航可达性 / URL正确性 |
-| **api** | API端点 | 状态码验证 / 响应时间检测 |
-| **page** | 页面结构 | 加载验证 / 标题检查 / 元素完整性 |
-
-### 用例格式
-
-```json
-{
-  "id": "TC-F-1",
-  "name": "登录-正常提交",
-  "priority": "P0",
-  "category": "form",
-  "steps": [
-    {"action": "type", "target": "用户名", "value": "admin"},
-    {"action": "type", "target": "密码", "value": "admin"},
-    {"action": "click", "target": "登录"}
-  ],
-  "expectations": [
-    {"type": "url_contains", "expected_value": "dashboard|home"}
-  ]
-}
-```
-
-### 优先级分布
-
-| 优先级 | 比例 | 含义 |
-|--------|------|------|
-| P0 | 20% | 核心流程 (页面加载/登录表单) |
-| P1 | 30% | 重要功能 (API状态码/按钮交互) |
-| P2 | 30% | 边界测试 (空值/特殊字符/超长) |
-| P3 | 20% | 探索性 (可见性/标题/完整性) |
-
-## 项目结构
-
-```
-AgentForWebUITest/
-├── config.yaml           # 配置 (浏览器/探索/用例/LLM)
-├── requirements.txt      # pyyaml>=6.0
-├── README.md
-├── reports/              # 自动生成的报告和用例
-│   ├── test_cases_*.json
-│   ├── knowledge_graph_*.json
-│   └── test_report_*.md
-├── tests/                # 测试套件 (9个测试)
-│   ├── conftest.py            # pytest路径配置
-│   ├── test_analyzer_func.py  # analyzer功能测试 (5个)
-│   ├── test_analyzer_verify.py # analyzer结构验证
-│   ├── test_verify_i2.py      # 迭代2验证
-│   ├── test_verify_i3.py      # 迭代3+4验证 (5段)
-│   └── test_verify_judge.py   # 判定引擎烟雾测试
-└── src/
-    ├── __init__.py
-    ├── agent.py           # 主入口 WebUITestAgent (410行)
-    ├── strategy.py         # 策略引擎 (114行)
-    ├── explorer.py         # BFS探索引擎 (283行)
-    ├── planner.py          # 智能用例生成器 (768行)
-    ├── executor.py         # ReAct执行引擎 (696行)
-    ├── healer.py           # 自愈选择器
-    ├── reporter.py         # 测试报告生成 (834行)
-    ├── judge.py            # 多模态判定引擎
-    ├── analyzer.py         # 根因分析器
-    ├── browser/
-    │   ├── __init__.py     # 重新导出
-    │   └── driver.py       # AgentBrowser + API拦截 (336行)
-    └── knowledge/
-        ├── __init__.py
-        └── graph.py        # KnowledgeGraph + 数据类 (237行)
-```
-
-## 路线图
+## 📊 项目状态
 
 | 迭代 | 内容 | 状态 |
-|------|------|------|
+|------|------|:--:|
 | 迭代1 | 自主探索 + 知识图谱 | ✅ |
-| 迭代2 | 智能用例生成 | ✅ |
-| 迭代3 | ReAct执行引擎 + 自愈 | ✅ |
-| 迭代4 | 智能判定 + 可视化报告 | ✅ |
-| **迭代5** | **TestSuite组装 + CI集成 + 多浏览器** | 📋 [方案](docs/iteration5_plan.md) |
+| 迭代2 | 智能用例生成 (5类) | ✅ |
+| 迭代3 | ReAct执行 + 自愈选择器 | ✅ |
+| 迭代4 | 智能判定 + 根因分析 | ✅ |
+| 迭代5 | TestSuite + CI集成 + 多浏览器 | ✅ |
 
-> 迭代5 详细方案: [docs/iteration5_plan.md](docs/iteration5_plan.md)
+| 模块 | 文件 | 行数 |
+|------|:--:|:--:|
+| 核心引擎 | 9 | ~4,800 |
+| TestSuite | 6 | ~750 |
+| 浏览器驱动 | 4 | ~750 |
+| 工具 | 5 | ~1,500 |
+| 测试 (9用例) | 6 | ~600 |
+| **合计** | **29** | **~8,500** |
+
+---
+
+## 📚 文档
+
+| 文档 | 说明 |
+|------|------|
+| [快速上手](docs/QUICKSTART.md) | 5分钟从零到使用 |
+| [安装指南](docs/INSTALLATION.md) | pip + Docker 多路径 |
+| [架构文档](docs/ARCHITECTURE.md) | 架构详解 |
+| [配置参考](docs/CONFIGURATION.md) | 完整参数说明 |
+| [日志调试](docs/LOGGING.md) | 日志与调试 |
+| [发版清单](docs/RELEASE_CHECKLIST.md) | 发布检查 |
+
+---
+
+## 🔧 CLI 命令
+
+```bash
+webui-test check                              # 环境自检
+webui-test test <url>                         # 完整测试
+webui-test explore <url>                      # 仅探索
+webui-test suite <url>                        # TestSuite 编排
+webui-test suite <url> --preset smoke         # 冒烟测试
+webui-test suite <url> --filter "P0+form"     # 过滤执行
+webui-test suite <url> --ci                   # CI模式
+webui-test version                            # 版本信息
+```
+
+---
+
+## 🧪 测试
+
+```bash
+pytest tests/ -v    # 9 passed
+make test           # 等效
+```
+
+---
 
 ## 版本历史
 
 | 版本 | 日期 | 变更 |
 |------|------|------|
-| **v0.4.0** | 2026-05-07 | 工程化: pip安装、CLI (webui-test)、CI/CD、Makefile |
-| v0.3.0 | 2026-04-28 | 迭代1+2+3+4 全部完成。9个测试全覆盖。 |
-| v0.2.0 | 2026-04-26 | 迭代1+2 完成。 |
-| v0.1.0 | 2026-04-26 | 项目初始化。 |
-
-## 技术栈
-
-- **浏览器**: agent-browser CLI v0.26.0 + Chrome 147 (计划: +Playwright Firefox/WebKit)
-- **语言**: Python 3
-- **依赖**: pyyaml (配置解析), playwright (可选, 多浏览器)
-- **测试**: pytest 9.0+ (9 tests)
-- **测试目标**: 任何标准Web应用
+| **v0.5.0** | 2026-05-07 | TestSuite + CI + 多浏览器 + 文档完善 |
+| v0.4.0 | 2026-05-07 | 工程化: pip/CLI/CI/Makefile |
+| v0.3.0 | 2026-04-28 | 迭代1-4: 探索/用例/执行/判定 |
+| v0.2.0 | 2026-04-26 | 迭代1-2: 探索 + 用例生成 |
+| v0.1.0 | 2026-04-26 | 项目初始化 |
