@@ -326,7 +326,7 @@ class TestReporter:
 
         export_data = {
             "generated_at": datetime.now().isoformat(),
-            "agent_version": "0.5.0",
+            "agent_version": "0.5.2",
             "iterations": "1+2+3+4",
             "summary": self._compute_stats(results),
             "healing_summary": self._compute_healing_stats(results),

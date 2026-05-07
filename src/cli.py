@@ -14,7 +14,7 @@ import sys
 import subprocess
 from pathlib import Path
 
-VERSION = "0.5.0"
+VERSION = "0.5.2"
 
 
 def cmd_test(url: str) -> bool:

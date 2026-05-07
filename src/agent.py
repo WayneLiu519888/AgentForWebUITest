@@ -54,7 +54,7 @@ class WebUITestAgent:
     后续迭代将逐步添加: 可视化报告增强
     """
     
-    VERSION = "0.5.0"
+    VERSION = "0.5.2"
     ITERATIONS = "1+2+3+4"
     
     def __init__(self, config_path: str = None):
