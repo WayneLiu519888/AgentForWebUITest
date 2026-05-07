@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-for-webui-test"
-version = "0.5.0"
+version = "0.5.2"
 authors = [
     {name = "HermesAgentEvolution Team", email = "contact@example.com"}
 ]
@@ -34,8 +34,9 @@ playwright = ["playwright>=1.40"]
 webui-test = "src.cli:main"
 
 [tool.setuptools]
-packages = ["src", "src.browser", "src.knowledge"]
+packages = ["src", "src.browser", "src.knowledge", "src.suite"]
 [tool.setuptools.package-dir]
 "src" = "src"
 "src.browser" = "src/browser"
 "src.knowledge" = "src/knowledge"
+"src.suite" = "src/suite"
