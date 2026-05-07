@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: agent-for-webui-test
-Version: 0.5.2
+Version: 0.5.1
 Summary: 自主Web UI测试Agent — 告诉Agent测试哪个系统，Agent自主完成探索、用例生成、执行、判定
 Author-email: HermesAgentEvolution Team <contact@example.com>
 License: MIT
