@@ -50,6 +50,13 @@ class TestReporter:
         self.output_dir = output_dir
         os.makedirs(output_dir, exist_ok=True)
         self._screenshot_refs: Dict[int, str] = {}
+        # Dynamic import to avoid circular dependency with agent.py
+        try:
+            from .agent import WebUITestAgent
+        except ImportError:
+            from agent import WebUITestAgent
+        self.version = WebUITestAgent.VERSION
+        self.iterations = WebUITestAgent.ITERATIONS
 
     def generate_summary(self, results: List[TestExecutionResult],
                          knowledge_graph=None,
@@ -77,7 +84,7 @@ class TestReporter:
         report = f"""# {title}
 
 **生成时间**: {now}
-**Agent版本**: v0.5.2 (Iteration 1+2+3+4)
+**Agent版本**: v{self.version} (Iteration {self.iterations})
 
 ---
 
@@ -295,7 +302,7 @@ class TestReporter:
             report += "\n"
 
         report += "---\n\n"
-        report += "*报告由 AgentForWebUITest v0.3.0 自动生成*\n"
+        report += f"*报告由 AgentForWebUITest v{self.version} 自动生成*\n"
 
         # 保存报告
         report_path = os.path.join(
@@ -326,8 +333,8 @@ class TestReporter:
 
         export_data = {
             "generated_at": datetime.now().isoformat(),
-            "agent_version": "0.5.2",
-            "iterations": "1+2+3+4",
+            "agent_version": self.version,
+            "iterations": self.iterations,
             "summary": self._compute_stats(results),
             "healing_summary": self._compute_healing_stats(results),
             "results": [r.to_dict() for r in results],
@@ -461,7 +468,7 @@ details[open] summary {{ border-bottom: 1px solid #e0e0e0; }}
 <!-- Header -->
 <div class="header">
   <h1>🧪 AgentForWebUITest — 执行报告</h1>
-  <div class="meta">生成时间: {now} &nbsp;|&nbsp; 版本: v0.5.2 (Iteration 1+2+3+4)</div>
+  <div class="meta">生成时间: {now} &nbsp;|&nbsp; 版本: v{self.version} (Iteration {self.iterations})</div>
 </div>
 
 <!-- 执行摘要 -->
@@ -563,7 +570,7 @@ details[open] summary {{ border-bottom: 1px solid #e0e0e0; }}
             html += self._build_html_timeline(results)
 
         html += """<div class="footer">
-  <p>报告由 <strong>AgentForWebUITest v0.3.0</strong> 自动生成</p>
+  <p>报告由 <strong>AgentForWebUITest v{self.version}</strong> 自动生成</p>
 </div>
 </div>
 </body>
@@ -679,7 +686,7 @@ body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans
 <div class="container">
 <div class="header">
   <h1>⏱️ AgentForWebUITest — 执行时间线</h1>
-  <div class="meta">生成时间: {now} &nbsp;|&nbsp; 版本: v0.3.0</div>
+  <div class="meta">生成时间: {now} &nbsp;|&nbsp; 版本: v{self.version}</div>
 </div>
 <div class="card">
   <div class="legend">
@@ -740,7 +747,7 @@ body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans
             html += "</div>\n"
 
         html += """</div>
-<div class="footer"><p>时间线由 <strong>AgentForWebUITest v0.3.0</strong> 生成</p></div>
+<div class="footer"><p>时间线由 <strong>AgentForWebUITest v{self.version}</strong> 生成</p></div>
 </div>
 </body>
 </html>"""
