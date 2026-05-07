@@ -33,6 +33,7 @@ try:
     from .judge import Judge, JudgeConfig, JudgementResult
     from .analyzer import Analyzer, FailureAnalysis, TrendReport, BugReport
     from .reporter import TestReporter
+    from .suite import SuiteBuilder, SuiteRunner, Filter
 except ImportError:
     from strategy import StrategyEngine, TestStrategy
     from explorer import Explorer, ExplorerConfig
@@ -43,6 +44,7 @@ except ImportError:
     from judge import Judge, JudgeConfig, JudgementResult
     from analyzer import Analyzer, FailureAnalysis, TrendReport, BugReport
     from reporter import TestReporter
+    from suite import SuiteBuilder, SuiteRunner, Filter
 
 
 class WebUITestAgent:
@@ -52,7 +54,7 @@ class WebUITestAgent:
     后续迭代将逐步添加: 可视化报告增强
     """
     
-    VERSION = "0.3.0"
+    VERSION = "0.5.0"
     ITERATIONS = "1+2+3+4"
     
     def __init__(self, config_path: str = None):
@@ -77,7 +79,8 @@ class WebUITestAgent:
         print(f"  Iteration {self.ITERATIONS}: 策略 + 探索 + 用例生成 + 自主执行")
         print("=" * 60)
     
-    def run(self, instruction: str, execute: bool = True) -> dict:
+    def run(self, instruction: str, execute: bool = True,
+            suite_preset: str = None, suite_filter: str = None) -> dict:
         """运行自主测试
         
         Args:
@@ -395,6 +398,79 @@ class WebUITestAgent:
         
         print(f"  报告已保存: {report_path}")
         return report_path
+    
+    def run_with_suite(self, instruction: str, 
+                       preset: str = "regression",
+                       filter_expr: str = None,
+                       split_by_category: bool = False) -> dict:
+        """运行完整流程 + TestSuite 编排
+        
+        Args:
+            instruction: 用户指令
+            preset: 套件预设 (smoke/critical/regression/full)
+            filter_expr: 额外过滤表达式
+            split_by_category: 是否按类别拆分套件
+        
+        Returns:
+            包含 suite_results 的完整结果字典
+        """
+        # 先执行探索+规划
+        result = self.run(instruction, execute=False)
+        
+        if not result["test_cases"]:
+            return result
+        
+        # 构建套件
+        builder = SuiteBuilder()
+        suites = builder.build(
+            result["test_cases"],
+            preset=preset,
+            filter_expr=filter_expr,
+            split_by_category=split_by_category
+        )
+        
+        # 初始化浏览器
+        browser = None
+        exec_cfg = self.config.get("executor", {})
+        if exec_cfg.get("use_browser", False):
+            browser_config = BrowserConfig(headless=True, 
+                session_name=f"suite-{datetime.now().strftime('%H%M%S')}")
+            browser = AgentBrowser(browser_config)
+        
+        # 创建执行器和运行器
+        executor_config = ExecutionConfig(
+            screenshot_on_step=exec_cfg.get("screenshot_on_step", True),
+            screenshot_on_fail=exec_cfg.get("screenshot_on_fail", True),
+            screenshot_dir=exec_cfg.get("screenshot_dir", "reports/screenshots"),
+            max_retries_per_step=exec_cfg.get("max_retries_per_step", 2),
+            enable_healing=exec_cfg.get("enable_healing", True),
+        )
+        executor = TestExecutor(browser=browser, 
+                               knowledge_graph=self.knowledge_graph,
+                               config=executor_config)
+        
+        ci_cfg = self.config.get("ci", {})
+        runner = SuiteRunner(
+            executor,
+            ci_mode=ci_cfg.get("exit_code_mode") == "fail_count",
+            continue_on_failure=True,
+            max_workers=self.config.get("suite", {}).get("max_workers", 1)
+        )
+        
+        # 执行
+        print(f"\n[Suite] 执行 {len(suites)} 个套件...")
+        suite_results = runner.run(suites, 
+            parallel=self.config.get("suite", {}).get("parallel", False))
+        
+        runner.print_summary(suite_results)
+        
+        if browser:
+            browser.close()
+        
+        result["suite_results"] = [r.to_dict() for r in suite_results]
+        result["suite_summary"] = runner.get_summary(suite_results)
+        
+        return result
     
     @staticmethod
     def _load_config(path: str = None) -> dict:
