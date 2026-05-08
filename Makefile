@@ -1,4 +1,4 @@
-.PHONY: install test lint clean build check
+.PHONY: install test lint clean build check version-check
 
 install:
 	pip install -e ".[dev]"
@@ -25,5 +25,8 @@ build:
 check:
 	python3 -c "from src.cli import cmd_check; cmd_check()"
 
-check-all: lint test
+version-check:
+	cd /root/AgentForWebUITest && python3 -m pytest tests/test_reporter_version.py -v
+
+check-all: lint test version-check
 	@echo "✅ All checks passed"

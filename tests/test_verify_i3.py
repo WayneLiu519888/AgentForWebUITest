@@ -343,6 +343,11 @@ def test_verify_i3():
     assert "自愈统计" in content
     assert "用例执行详情" in content
     print(f"     报告包含: 执行概览, 自愈统计, 用例执行详情")
+    # CI 版本号断言: Markdown报告必须包含agent版本号 (防止升级时遗漏)
+    assert WebUITestAgent.VERSION in content, (
+        f"Markdown报告缺少版本号: {WebUITestAgent.VERSION} 不在报告中"
+    )
+    print(f"     版本校验: v{WebUITestAgent.VERSION} ✅")
 
     # 3.2 JSON导出
     print("\n  3.2 JSON导出:")
@@ -362,6 +367,17 @@ def test_verify_i3():
     print(f"     JSON包含: {len(jdata['results'])} 结果, "
           f"summary={jdata['summary']['total']} total, "
           f"healing={jdata['healing_summary']['total_healings']}")
+
+    # 3.2a HTML报告版本号
+    print("\n  3.2a HTML报告:")
+    html_path = reporter.generate_html(all_results)
+    assert os.path.exists(html_path), f"HTML文件不存在: {html_path}"
+    with open(html_path, 'r') as f:
+        html_content = f.read()
+    assert WebUITestAgent.VERSION in html_content, (
+        f"HTML报告缺少版本号: {WebUITestAgent.VERSION} 不在报告中"
+    )
+    print(f"     ✅ HTML报告包含版本号 v{WebUITestAgent.VERSION}")
 
     # 3.3 空结果报告
     print("\n  3.3 空结果处理:")
