@@ -65,31 +65,36 @@ def test_reporter_dynamic_import():
 def _mock_results():
     """构造最小化的模拟执行结果，供报告生成测试使用"""
     step_pass = StepResult(
-        action="navigate",
-        target="https://httpbin.org",
+        step_index=1,
+        step_action="navigate",
+        step_target="https://httpbin.org",
+        step_description="导航到目标页面",
         status="PASS",
         duration_ms=120,
-        description="导航到目标页面",
-        result_summary="页面加载成功",
         timestamp=datetime.now().isoformat(),
     )
     step_fail = StepResult(
-        action="click",
-        target="登录按钮",
+        step_index=2,
+        step_action="click",
+        step_target="登录按钮",
+        step_description="点击登录按钮",
         status="FAIL",
         duration_ms=80,
-        description="点击登录按钮",
         error_message="元素不可见",
         timestamp=datetime.now().isoformat(),
     )
     result = TestExecutionResult(
-        case_id="TC-001",
-        case_title="登录功能测试",
-        steps=[step_pass, step_fail],
-        status="FAIL",
-        total_duration_ms=200,
-        category="form",
+        test_case_id="TC-001",
+        test_case_name="登录功能测试",
         priority="P0",
+        category="form",
+        source_page="https://httpbin.org",
+        status="FAIL",
+        step_results=[step_pass, step_fail],
+        total_steps=2,
+        passed_steps=1,
+        failed_steps=1,
+        total_duration_ms=200,
         healing_records=[
             HealingRecord(
                 original_target="登录按钮",
